@@ -32,6 +32,17 @@ Route::middleware('auth')->group(function () {
     Route::get('/campaigns/create', CampaignForm::class)->name('campaigns.create');
     Route::get('/campaigns/{campaign}/edit', CampaignForm::class)->name('campaigns.edit');
     Route::get('/campaigns/{campaign}', CampaignDetail::class)->name('campaigns.show');
+    
+    // Download recipient templates
+    Route::get('/download/recipient-template', function () {
+        $path = storage_path('app/templates/recipients-template.csv');
+        return response()->download($path, 'template-recipients.csv');
+    })->name('download.recipient-template');
+    
+    Route::get('/download/recipient-template-excel', function () {
+        $path = storage_path('app/templates/recipients-template.xlsx');
+        return response()->download($path, 'template-recipients.xlsx');
+    })->name('download.recipient-template-excel');
 
     Route::get('/templates', TemplateList::class)->name('templates.index');
     Route::get('/templates/create', TemplateForm::class)->name('templates.create');

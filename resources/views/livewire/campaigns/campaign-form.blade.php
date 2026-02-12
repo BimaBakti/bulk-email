@@ -51,10 +51,22 @@
 
             {{-- Recipients Upload --}}
             <div class="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 p-6">
-                <h3 class="font-semibold text-gray-900 dark:text-white mb-4">
-                    Recipients
-                    <span class="text-sm font-normal text-gray-500 ml-2">{{ number_format($recipientCount) }} recipients</span>
-                </h3>
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="font-semibold text-gray-900 dark:text-white">
+                        Recipients
+                        <span class="text-sm font-normal text-gray-500 ml-2">{{ number_format($recipientCount) }} recipients</span>
+                    </h3>
+                    <div class="flex gap-2">
+                        <a href="{{ route('download.recipient-template') }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-emerald-600 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 rounded-lg transition" download>
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                            CSV
+                        </a>
+                        <a href="{{ route('download.recipient-template-excel') }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-violet-600 dark:text-violet-400 hover:bg-violet-50 dark:hover:bg-violet-900/20 rounded-lg transition" download>
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                            Excel
+                        </a>
+                    </div>
+                </div>
                 <div class="border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-xl p-6 text-center">
                     <input type="file" wire:model="recipientFile" class="hidden" id="recipient-file" accept=".csv,.xlsx,.xls">
                     <label for="recipient-file" class="cursor-pointer">
