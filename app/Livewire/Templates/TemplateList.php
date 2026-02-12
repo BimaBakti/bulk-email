@@ -24,7 +24,7 @@ class TemplateList extends Component
     public function deleteTemplate(int $id): void
     {
         EmailTemplate::where('user_id', auth()->id())->findOrFail($id)->delete();
-        $this->dispatch('toast', type: 'success', message: 'Template deleted.');
+        flash()->success('Template deleted.');
     }
 
     public function render()

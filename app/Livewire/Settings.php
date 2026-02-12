@@ -23,10 +23,7 @@ class Settings extends Component
         $this->smtpResult = $service->testSmtpConnection();
         $this->smtpTesting = false;
 
-        $this->dispatch('toast',
-            type: $this->smtpResult['success'] ? 'success' : 'error',
-            message: $this->smtpResult['message']
-        );
+        $this->smtpResult['success'] ? flash()->success($this->smtpResult['message']) : flash()->error($this->smtpResult['message']);
     }
 
     public function sendTestEmail(): void
@@ -40,9 +37,9 @@ class Settings extends Component
                 'Test Email dari BulkMailer',
                 '<h2>Test Email Berhasil!</h2><p>Jika Anda menerima email ini, berarti konfigurasi Gmail SMTP Anda sudah benar.</p><p>Dikirim pada: ' . now()->format('d M Y H:i:s') . '</p>'
             );
-            $this->dispatch('toast', type: 'success', message: 'Test email sent to ' . $this->testEmailAddress);
+            flash()->success('Test email sent to ' . $this->testEmailAddress);
         } catch (\Exception $e) {
-            $this->dispatch('toast', type: 'error', message: 'Failed: ' . $e->getMessage());
+            flash()->error('Failed: ' . $e->getMessage());
         }
     }
 

@@ -36,14 +36,14 @@ class CampaignDetail extends Component
     {
         app(CampaignService::class)->pauseCampaign($this->campaign);
         $this->campaign->refresh();
-        $this->dispatch('toast', type: 'info', message: 'Campaign paused.');
+        flash()->info('Campaign paused.');
     }
 
     public function resumeCampaign(): void
     {
         app(CampaignService::class)->resumeCampaign($this->campaign);
         $this->campaign->refresh();
-        $this->dispatch('toast', type: 'success', message: 'Campaign resumed.');
+        flash()->success('Campaign resumed.');
     }
 
     public function stopCampaign(): void
@@ -51,7 +51,7 @@ class CampaignDetail extends Component
         app(CampaignService::class)->stopCampaign($this->campaign);
         $this->campaign->refresh();
         $this->refreshStats();
-        $this->dispatch('toast', type: 'warning', message: 'Campaign stopped.');
+        flash()->warning('Campaign stopped.');
     }
 
     public function retryFailed(): void
@@ -66,7 +66,7 @@ class CampaignDetail extends Component
         }
 
         $this->refreshStats();
-        $this->dispatch('toast', type: 'success', message: 'Failed emails queued for retry.');
+        flash()->success('Failed emails queued for retry.');
     }
 
     public function exportReport()

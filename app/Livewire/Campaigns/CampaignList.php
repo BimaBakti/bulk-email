@@ -32,7 +32,7 @@ class CampaignList extends Component
     {
         $campaign = Campaign::where('user_id', auth()->id())->findOrFail($id);
         $campaign->delete();
-        $this->dispatch('toast', type: 'success', message: 'Campaign deleted successfully.');
+        flash()->success('Campaign deleted successfully.');
     }
 
     public function duplicateCampaign(int $id): void
@@ -40,28 +40,28 @@ class CampaignList extends Component
         $campaign = Campaign::where('user_id', auth()->id())->findOrFail($id);
         $service = app(CampaignService::class);
         $newCampaign = $service->duplicateCampaign($campaign);
-        $this->dispatch('toast', type: 'success', message: "Campaign duplicated: {$newCampaign->name}");
+        flash()->success("Campaign duplicated: {$newCampaign->name}");
     }
 
     public function pauseCampaign(int $id): void
     {
         $campaign = Campaign::where('user_id', auth()->id())->findOrFail($id);
         app(CampaignService::class)->pauseCampaign($campaign);
-        $this->dispatch('toast', type: 'info', message: 'Campaign paused.');
+        flash()->info('Campaign paused.');
     }
 
     public function resumeCampaign(int $id): void
     {
         $campaign = Campaign::where('user_id', auth()->id())->findOrFail($id);
         app(CampaignService::class)->resumeCampaign($campaign);
-        $this->dispatch('toast', type: 'success', message: 'Campaign resumed.');
+        flash()->success('Campaign resumed.');
     }
 
     public function stopCampaign(int $id): void
     {
         $campaign = Campaign::where('user_id', auth()->id())->findOrFail($id);
         app(CampaignService::class)->stopCampaign($campaign);
-        $this->dispatch('toast', type: 'warning', message: 'Campaign stopped.');
+        flash()->warning('Campaign stopped.');
     }
 
     public function render()

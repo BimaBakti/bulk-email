@@ -81,7 +81,7 @@ class CampaignForm extends Component
         $this->availableTags = $service->getAvailableMergeTags($campaign);
         $this->recipientFile = null;
 
-        $this->dispatch('toast', type: $this->importResult['success'] ? 'success' : 'error', message: $this->importResult['message']);
+        $this->importResult['success'] ? flash()->success($this->importResult['message']) : flash()->error($this->importResult['message']);
     }
 
     public function uploadAttachments(): void
@@ -106,7 +106,7 @@ class CampaignForm extends Component
 
         $this->existingAttachments = $campaign->attachments->fresh()->toArray();
         $this->attachmentFiles = [];
-        $this->dispatch('toast', type: 'success', message: 'Attachments uploaded.');
+        flash()->success('Attachments uploaded.');
     }
 
     public function removeAttachment(int $id): void
@@ -126,7 +126,7 @@ class CampaignForm extends Component
         if ($template) {
             $this->subject = $template->subject;
             $this->body = $template->body;
-            $this->dispatch('toast', type: 'info', message: "Template '{$template->name}' loaded.");
+            flash()->info("Template '{$template->name}' loaded.");
             $this->dispatch('set-editor-content', content: $this->body);
         }
     }
@@ -156,16 +156,16 @@ class CampaignForm extends Component
             $body = str_replace(['{{nama}}', '{{email}}'], ['Test User', $this->testEmailAddress], $this->body);
             $service->sendTestEmail($this->testEmailAddress, $subject, $body);
             $this->showTestModal = false;
-            $this->dispatch('toast', type: 'success', message: 'Test email sent! (not counted in quota)');
+            flash()->success('Test email sent! (not counted in quota)');
         } catch (\Exception $e) {
-            $this->dispatch('toast', type: 'error', message: 'Test email failed: ' . $e->getMessage());
+            flash()->error('Test email failed: ' . $e->getMessage());
         }
     }
 
     public function saveDraft(): void
     {
         $this->saveCampaign('draft');
-        $this->dispatch('toast', type: 'success', message: 'Campaign saved as draft.');
+        flash()->success('Campaign saved as draft.');
     }
 
     public function startCampaign(): void
@@ -173,7 +173,7 @@ class CampaignForm extends Component
         $campaign = $this->saveCampaign($this->scheduleType === 'scheduled' ? 'scheduled' : 'draft');
 
         if ($campaign->recipients()->count() === 0) {
-            $this->dispatch('toast', type: 'error', message: 'Please upload recipients first.');
+            flash()->error('Please upload recipients first.');
             return;
         }
 
@@ -181,10 +181,10 @@ class CampaignForm extends Component
 
         if ($this->scheduleType === 'now') {
             $service->startCampaign($campaign);
-            $this->dispatch('toast', type: 'success', message: 'Campaign started! Emails are being queued.');
+            flash()->success('Campaign started! Emails are being queued.');
         } else {
             $campaign->update(['status' => 'scheduled']);
-            $this->dispatch('toast', type: 'success', message: 'Campaign scheduled for ' . $campaign->scheduled_at->format('d M Y H:i'));
+            flash()->success('Campaign scheduled for ' . $campaign->scheduled_at->format('d M Y H:i'));
         }
 
         $this->redirect(route('campaigns.show', $campaign), navigate: true);
