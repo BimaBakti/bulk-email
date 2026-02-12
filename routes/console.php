@@ -15,3 +15,14 @@ Schedule::job(new ResetDailyQuotaJob)->dailyAt('00:01');
 
 // Cleanup old failed logs weekly
 Schedule::job(new CleanupFailedEmailsJob)->weekly();
+
+// Check for scheduled campaigns every hour
+Schedule::call(function () {
+    $campaigns = \App\Models\Campaign::where('status', \App\Models\Campaign::STATUS_SCHEDULED)
+        ->where('scheduled_at', '<=', now())
+        ->get();
+
+    foreach ($campaigns as $campaign) {
+        app(\App\Services\CampaignService::class)->startCampaign($campaign);
+    }
+})->hourly();
