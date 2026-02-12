@@ -1,7 +1,42 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Livewire\Auth\Login;
+use App\Livewire\Auth\Register;
+use App\Livewire\Dashboard;
+use App\Livewire\Campaigns\CampaignList;
+use App\Livewire\Campaigns\CampaignForm;
+use App\Livewire\Campaigns\CampaignDetail;
+use App\Livewire\Templates\TemplateList;
+use App\Livewire\Templates\TemplateForm;
+use App\Livewire\EmailLogs;
+use App\Livewire\Settings;
 
-Route::get('/', function () {
-    return view('welcome');
-})->name('home');
+// Guest routes
+Route::middleware('guest')->group(function () {
+    Route::get('/login', Login::class)->name('login');
+    Route::get('/register', Register::class)->name('register');
+});
+
+// Authenticated routes
+Route::middleware('auth')->group(function () {
+    Route::post('/logout', function () {
+        auth()->logout();
+        request()->session()->invalidate();
+        request()->session()->regenerateToken();
+        return redirect('/login');
+    })->name('logout');
+
+    Route::get('/', Dashboard::class)->name('dashboard');
+    Route::get('/campaigns', CampaignList::class)->name('campaigns.index');
+    Route::get('/campaigns/create', CampaignForm::class)->name('campaigns.create');
+    Route::get('/campaigns/{campaign}/edit', CampaignForm::class)->name('campaigns.edit');
+    Route::get('/campaigns/{campaign}', CampaignDetail::class)->name('campaigns.show');
+
+    Route::get('/templates', TemplateList::class)->name('templates.index');
+    Route::get('/templates/create', TemplateForm::class)->name('templates.create');
+    Route::get('/templates/{emailTemplate}/edit', TemplateForm::class)->name('templates.edit');
+
+    Route::get('/logs', EmailLogs::class)->name('logs.index');
+    Route::get('/settings', Settings::class)->name('settings.index');
+});
