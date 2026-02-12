@@ -8,6 +8,7 @@ use App\Models\EmailLog;
 use App\Models\Attachment;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Mail\Message;
 
 class EmailService
@@ -42,11 +43,16 @@ class EmailService
                     ->subject($subject);
 
                 foreach ($attachments as $attachment) {
-                    $fullPath = storage_path('app/' . $attachment->path);
+                    $fullPath = Storage::path($attachment->path);
                     if (file_exists($fullPath)) {
                         $message->attach($fullPath, [
                             'as' => $attachment->original_name,
                             'mime' => $attachment->mime_type,
+                        ]);
+                    } else {
+                        Log::warning("Attachment file not found", [
+                            'path' => $fullPath,
+                            'attachment_id' => $attachment->id,
                         ]);
                     }
                 }

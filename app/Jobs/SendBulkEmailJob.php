@@ -26,8 +26,8 @@ class SendBulkEmailJob implements ShouldQueue
 
     public function handle(EmailService $emailService): void
     {
-        // Re-check campaign status
-        $campaign = $this->campaign->fresh();
+        // Re-check campaign status and load attachments
+        $campaign = $this->campaign->fresh(['attachments']);
         if ($campaign->status !== Campaign::STATUS_PROCESSING) {
             $this->recipient->update(['status' => Recipient::STATUS_PENDING]);
             return;

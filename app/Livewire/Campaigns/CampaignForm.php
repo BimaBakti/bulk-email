@@ -94,13 +94,23 @@ class CampaignForm extends Component
             $filename = uniqid() . '_' . $file->getClientOriginalName();
             $path = $file->storeAs('attachments/' . $campaign->id, $filename);
 
+            // Safely get file metadata
+            try {
+                $size = $file->getSize();
+                $mimeType = $file->getMimeType();
+            } catch (\Exception $e) {
+                // Fallback: get from stored file
+                $size = \Storage::size($path);
+                $mimeType = \Storage::mimeType($path);
+            }
+
             Attachment::create([
                 'campaign_id' => $campaign->id,
                 'filename' => $filename,
                 'original_name' => $file->getClientOriginalName(),
                 'path' => $path,
-                'mime_type' => $file->getMimeType(),
-                'size' => $file->getSize(),
+                'mime_type' => $mimeType,
+                'size' => $size,
             ]);
         }
 
