@@ -11,43 +11,8 @@
     @livewireStyles
 </head>
 <body class="font-sans antialiased bg-gray-50 dark:bg-gray-950 text-gray-900 dark:text-gray-100 min-h-screen">
-    {{-- Toast Notifications --}}
-    <div x-data="toastManager()" @toast.window="addToast($event.detail)" class="fixed top-4 right-4 z-[100] space-y-3 w-96">
-        <template x-for="toast in toasts" :key="toast.id">
-            <div x-show="toast.visible" x-transition:enter="transition ease-out duration-300"
-                 x-transition:enter-start="opacity-0 translate-x-8"
-                 x-transition:enter-end="opacity-100 translate-x-0"
-                 x-transition:leave="transition ease-in duration-200"
-                 x-transition:leave-start="opacity-100"
-                 x-transition:leave-end="opacity-0 translate-x-8"
-                 class="rounded-xl shadow-2xl border p-4 backdrop-blur-sm"
-                 :class="{
-                    'bg-emerald-50/90 border-emerald-200 dark:bg-emerald-950/90 dark:border-emerald-800': toast.type === 'success',
-                    'bg-red-50/90 border-red-200 dark:bg-red-950/90 dark:border-red-800': toast.type === 'error',
-                    'bg-amber-50/90 border-amber-200 dark:bg-amber-950/90 dark:border-amber-800': toast.type === 'warning',
-                    'bg-blue-50/90 border-blue-200 dark:bg-blue-950/90 dark:border-blue-800': toast.type === 'info'
-                 }">
-                <div class="flex items-start gap-3">
-                    <div class="shrink-0 mt-0.5">
-                        <template x-if="toast.type === 'success'"><svg class="w-5 h-5 text-emerald-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" clip-rule="evenodd"/></svg></template>
-                        <template x-if="toast.type === 'error'"><svg class="w-5 h-5 text-red-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.28 7.22a.75.75 0 00-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 101.06 1.06L10 11.06l1.72 1.72a.75.75 0 101.06-1.06L11.06 10l1.72-1.72a.75.75 0 00-1.06-1.06L10 8.94 8.28 7.22z" clip-rule="evenodd"/></svg></template>
-                        <template x-if="toast.type === 'warning'"><svg class="w-5 h-5 text-amber-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8.485 2.495c.673-1.167 2.357-1.167 3.03 0l6.28 10.875c.673 1.167-.17 2.625-1.516 2.625H3.72c-1.347 0-2.189-1.458-1.515-2.625L8.485 2.495zM10 5a.75.75 0 01.75.75v3.5a.75.75 0 01-1.5 0v-3.5A.75.75 0 0110 5zm0 9a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd"/></svg></template>
-                        <template x-if="toast.type === 'info'"><svg class="w-5 h-5 text-blue-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a.75.75 0 000 1.5h.253a.25.25 0 01.244.304l-.459 2.066A1.75 1.75 0 0010.747 15H11a.75.75 0 000-1.5h-.253a.25.25 0 01-.244-.304l.459-2.066A1.75 1.75 0 009.253 9H9z" clip-rule="evenodd"/></svg></template>
-                    </div>
-                    <p class="text-sm font-medium flex-1" x-text="toast.message"
-                       :class="{
-                          'text-emerald-800 dark:text-emerald-200': toast.type === 'success',
-                          'text-red-800 dark:text-red-200': toast.type === 'error',
-                          'text-amber-800 dark:text-amber-200': toast.type === 'warning',
-                          'text-blue-800 dark:text-blue-200': toast.type === 'info'
-                       }"></p>
-                    <button @click="removeToast(toast.id)" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
-                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
-                    </button>
-                </div>
-            </div>
-        </template>
-    </div>
+    {{-- PHP Flasher Notifications --}}
+    @flasher_render
 
     <div class="flex min-h-screen">
         {{-- Sidebar --}}
@@ -140,29 +105,5 @@
     </div>
 
     @livewireScripts
-    <script>
-        function toastManager() {
-            return {
-                toasts: [],
-                addToast(detail) {
-                    const id = Date.now();
-                    this.toasts.push({ id, ...detail, visible: true });
-                    setTimeout(() => this.removeToast(id), 5000);
-                },
-                removeToast(id) {
-                    const toast = this.toasts.find(t => t.id === id);
-                    if (toast) toast.visible = false;
-                    setTimeout(() => { this.toasts = this.toasts.filter(t => t.id !== id); }, 300);
-                }
-            };
-        }
-
-        // Listen for Livewire dispatched events
-        document.addEventListener('livewire:init', () => {
-            Livewire.on('toast', (data) => {
-                window.dispatchEvent(new CustomEvent('toast', { detail: data[0] || data }));
-            });
-        });
-    </script>
 </body>
 </html>
