@@ -22,9 +22,9 @@
                     <div>
                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                             Subject Line
-                            <span class="text-gray-400 font-normal">— use merge tags: @foreach($availableTags as $tag)<code class="px-1 py-0.5 bg-violet-100 dark:bg-violet-900/40 text-violet-700 dark:text-violet-400 rounded text-xs mx-0.5 cursor-pointer" onclick="document.getElementById('subject-input').value += '{{ '{{' . $tag . '}}' }}'; document.getElementById('subject-input').dispatchEvent(new Event('input'));">@{{ $tag }}</code>@endforeach</span>
+                            <span class="text-gray-400 font-normal">— use merge tags: @foreach($availableTags as $tag)@php $tagStr = '{{' . $tag . '}}'; @endphp<code class="px-1 py-0.5 bg-violet-100 dark:bg-violet-900/40 text-violet-700 dark:text-violet-400 rounded text-xs mx-0.5 cursor-pointer" onclick="document.getElementById('subject-input').value += '{{ $tagStr }}'; document.getElementById('subject-input').dispatchEvent(new Event('input'));">{{ $tagStr }}</code>@endforeach</span>
                         </label>
-                        <input type="text" id="subject-input" wire:model="subject" class="w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-sm focus:ring-2 focus:ring-violet-500 focus:border-transparent transition" placeholder="e.g. Halo {{nama}}, ini update terbaru!">
+                        <input type="text" id="subject-input" wire:model="subject" class="w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-sm focus:ring-2 focus:ring-violet-500 focus:border-transparent transition" placeholder="e.g. Halo @{{nama}}, ini update terbaru!">
                         @error('subject') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                     </div>
                 </div>
@@ -36,8 +36,9 @@
                     <h3 class="font-semibold text-gray-900 dark:text-white">Email Body</h3>
                     <div class="flex gap-2">
                         @foreach($availableTags as $tag)
-                            <button type="button" onclick="insertMergeTag('{{ '{{' . $tag . '}}' }}')"
-                                    class="px-2 py-1 text-xs bg-violet-100 dark:bg-violet-900/40 text-violet-700 dark:text-violet-400 rounded-lg hover:bg-violet-200 dark:hover:bg-violet-900/60 transition">{!! '{{' . $tag . '}}' !!}</button>
+                            @php $mergeTag = '{{' . $tag . '}}'; @endphp
+                            <button type="button" onclick="insertMergeTag('{{ $mergeTag }}')"
+                                    class="px-2 py-1 text-xs bg-violet-100 dark:bg-violet-900/40 text-violet-700 dark:text-violet-400 rounded-lg hover:bg-violet-200 dark:hover:bg-violet-900/60 transition">{{ $mergeTag }}</button>
                         @endforeach
                     </div>
                 </div>
@@ -179,7 +180,7 @@
                 <ul class="text-xs text-amber-700 dark:text-amber-400 space-y-1.5">
                     <li>• CSV harus memiliki header: <code>email, nama</code></li>
                     <li>• Kolom tambahan otomatis menjadi merge tags</li>
-                    <li>• Gunakan <code>{{'{{nama}}'}}</code> di subject/body untuk personalisasi</li>
+                    <li>• Gunakan <code>@{{nama}}</code> di subject/body untuk personalisasi</li>
                     <li>• Max {{ config('bulkemail.daily_limit') }} email per hari</li>
                     <li>• Delay {{ config('bulkemail.delay_between_emails') }} detik antar email</li>
                 </ul>

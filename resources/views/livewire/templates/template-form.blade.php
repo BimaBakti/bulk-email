@@ -17,16 +17,18 @@
 
             <div>
                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Subject Line</label>
-                <input type="text" wire:model="subject" class="w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-sm focus:ring-2 focus:ring-violet-500 focus:border-transparent transition" placeholder="e.g. Halo {{nama}}, ini email untuk Anda!">
+                <input type="text" wire:model="subject" class="w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-sm focus:ring-2 focus:ring-violet-500 focus:border-transparent transition" placeholder="e.g. Halo @{{nama}}, ini email untuk Anda!">
                 @error('subject') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
             </div>
 
             <div>
                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Body</label>
                 <div class="flex gap-2 mb-2">
-                    @foreach(['nama', 'email'] as $tag)
-                        <button type="button" onclick="insertMergeTagTpl('{{ '{{' . $tag . '}}' }}')"
-                                class="px-2 py-1 text-xs bg-violet-100 dark:bg-violet-900/40 text-violet-700 dark:text-violet-400 rounded-lg hover:bg-violet-200 transition">{!! '{{' . $tag . '}}' !!}</button>
+                    @php $mergeTags = ['nama', 'email']; @endphp
+                    @foreach($mergeTags as $tag)
+                        @php $tagString = '{{' . $tag . '}}'; @endphp
+                        <button type="button" onclick="insertMergeTagTpl('{{ $tagString }}')"
+                                class="px-2 py-1 text-xs bg-violet-100 dark:bg-violet-900/40 text-violet-700 dark:text-violet-400 rounded-lg hover:bg-violet-200 transition">{{ $tagString }}</button>
                     @endforeach
                 </div>
                 <div wire:ignore>
