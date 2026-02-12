@@ -11,6 +11,8 @@ use App\Livewire\Templates\TemplateList;
 use App\Livewire\Templates\TemplateForm;
 use App\Livewire\EmailLogs;
 use App\Livewire\Settings;
+use App\Livewire\Letters\LetterTemplateList;
+use App\Livewire\Letters\LetterTemplateForm;
 
 // Guest routes
 Route::middleware('guest')->group(function () {
@@ -47,6 +49,11 @@ Route::middleware('auth')->group(function () {
     Route::get('/templates', TemplateList::class)->name('templates.index');
     Route::get('/templates/create', TemplateForm::class)->name('templates.create');
     Route::get('/templates/{emailTemplate}/edit', TemplateForm::class)->name('templates.edit');
+
+    // Letter Templates (PDF)
+    Route::get('/letters', LetterTemplateList::class)->name('letters.index');
+    Route::get('/letters/create', LetterTemplateForm::class)->name('letters.create');
+    Route::get('/letters/{letterTemplate}/edit', LetterTemplateForm::class)->name('letters.edit');
 
     Route::get('/logs', EmailLogs::class)->name('logs.index');
     Route::get('/settings', Settings::class)->name('settings.index');

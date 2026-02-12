@@ -16,6 +16,7 @@ class EmailService
     public function __construct(
         protected MergeTagParser $mergeTagParser,
         protected QuotaService $quotaService,
+        protected PdfGeneratorService $pdfGenerator,
     ) {}
 
     /**
@@ -53,6 +54,50 @@ class EmailService
                         Log::warning("Attachment file not found", [
                             'path' => $fullPath,
                             'attachment_id' => $attachment->id,
+                        ]);
+                    }
+                }
+
+                // Dynamic letter PDF
+                if ($campaign->letter_template_id && $campaign->letterTemplate) {
+                    try {
+                        $pdfPath = $this->pdfGenerator->generateForRecipient(
+                            $campaign->letterTemplate,
+                            $recipient,
+                            $campaign->letter_filename ?? 'Surat'
+                        );
+                        
+                        $message->attach(Storage::path($pdfPath), [
+                            'as' => ($campaign->letter_filename ?? 'Surat') . '.pdf',
+                            'mime' => 'application/pdf',
+                        ]);
+
+                        // We can't easily delete the file here because attach() might need it later in the process
+                        // depending on how Mail::html queues things. 
+                        // But since we are inside the closure which executes immediately for sync,
+                        // or if queued, the closure is serialized... wait.
+                        // Actually SendBulkEmailJob is queued, so this entire closure runs inside the worker.
+                        // So we CAN delete it after sending? 
+                        // No, attach() adds it to the swift/symfony message. 
+                        // We should delete it AFTER the mail is sent.
+                        // But we don't have a callback for "after sent".
+                        // Strategy: Add to a cleanup list or just rely on a scheduled cleanup job for temp files.
+                        // OR: Delete it immediately if we're sure attach() reads content into memory?
+                        // Symfony Mailer attach() reads path.
+                        
+                        // Better approach for now: Leave it to scheduled cleanup or try to delete after Mail::html returns?
+                        // Mail::html returns "sent" (void in L9+).
+                        // But wait, the closure is built then executed.
+                        // The $pdfPath needs to be passed out or we need a way to clean it up.
+                        
+                        // Let's rely on a cleanup job for temp files to be safe, 
+                        // OR we can simple allow the temp file to exist for a bit.
+                        
+                    } catch (\Exception $e) {
+                         Log::error("Failed to generate PDF attachment", [
+                            'campaign_id' => $campaign->id,
+                            'recipient_id' => $recipient->id,
+                            'error' => $e->getMessage(),
                         ]);
                     }
                 }

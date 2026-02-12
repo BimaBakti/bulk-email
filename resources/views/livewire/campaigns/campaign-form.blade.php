@@ -130,6 +130,42 @@
                     </div>
                 @endif
             </div>
+
+            {{-- Letter Attachment (PDF) --}}
+            <div class="mt-6 bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 p-6">
+                <h3 class="font-semibold text-gray-900 dark:text-white mb-4">Letter Attachment (PDF)</h3>
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Select Letter Template</label>
+                        <select wire:model="selectedLetterTemplateId" class="w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-sm focus:ring-2 focus:ring-violet-500 focus:border-transparent transition">
+                            <option value="">No Letter Attachment</option>
+                            @foreach($letterTemplates as $lt)
+                                <option value="{{ $lt->id }}">{{ $lt->name }}</option>
+                            @endforeach
+                        </select>
+                        <p class="text-xs text-gray-500 mt-1">A personalized PDF will be generated for each recipient.</p>
+                    </div>
+
+                    @if($selectedLetterTemplateId)
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">PDF Info</label>
+                             <div class="flex gap-2">
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300">
+                                    Generated dynamically
+                                </span>
+                            </div>
+                        </div>
+
+                        <div>
+                             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Attachment Filename</label>
+                             <div class="flex items-center">
+                                 <input type="text" wire:model="letterFilename" class="flex-1 px-4 py-2.5 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-l-xl text-sm focus:ring-2 focus:ring-violet-500 focus:border-transparent transition" placeholder="Surat">
+                                 <span class="px-4 py-2.5 bg-gray-100 dark:bg-gray-700 border border-l-0 border-gray-200 dark:border-gray-600 rounded-r-xl text-gray-500 dark:text-gray-400 text-sm">.pdf</span>
+                             </div>
+                        </div>
+                    @endif
+                </div>
+            </div>
         </div>
 
         {{-- Sidebar --}}

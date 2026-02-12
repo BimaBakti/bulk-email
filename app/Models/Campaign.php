@@ -22,6 +22,8 @@ class Campaign extends Model
         'started_at',
         'completed_at',
         'settings',
+        'letter_template_id',
+        'letter_filename',
     ];
 
     protected function casts(): array
@@ -57,6 +59,11 @@ class Campaign extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function letterTemplate(): BelongsTo
+    {
+        return $this->belongsTo(LetterTemplate::class);
     }
 
     public function recipients(): HasMany

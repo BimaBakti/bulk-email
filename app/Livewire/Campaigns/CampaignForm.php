@@ -4,6 +4,7 @@ namespace App\Livewire\Campaigns;
 
 use App\Models\Campaign;
 use App\Models\EmailTemplate;
+use App\Models\LetterTemplate;
 use App\Models\Attachment;
 use App\Services\RecipientService;
 use App\Services\CampaignService;
@@ -39,6 +40,10 @@ class CampaignForm extends Component
     // Template
     public ?int $selectedTemplateId = null;
 
+    // Letter Template
+    public ?int $selectedLetterTemplateId = null;
+    public string $letterFilename = 'Surat';
+
     // Preview
     public bool $showPreview = false;
     public string $previewSubject = '';
@@ -65,6 +70,9 @@ class CampaignForm extends Component
 
             $recipientService = app(RecipientService::class);
             $this->availableTags = $recipientService->getAvailableMergeTags($campaign);
+
+            $this->selectedLetterTemplateId = $campaign->letter_template_id;
+            $this->letterFilename = $campaign->letter_filename ?? 'Surat';
         }
     }
 
@@ -219,6 +227,8 @@ class CampaignForm extends Component
                 'delay' => config('bulkemail.delay_between_emails'),
                 'batch_size' => config('bulkemail.batch_size'),
             ],
+            'letter_template_id' => $this->selectedLetterTemplateId,
+            'letter_filename' => $this->letterFilename,
         ];
 
         if ($this->campaign) {
@@ -239,7 +249,8 @@ class CampaignForm extends Component
     public function render()
     {
         $templates = EmailTemplate::where('user_id', auth()->id())->get();
+        $letterTemplates = LetterTemplate::where('user_id', auth()->id())->get();
 
-        return view('livewire.campaigns.campaign-form', compact('templates'));
+        return view('livewire.campaigns.campaign-form', compact('templates', 'letterTemplates'));
     }
 }
